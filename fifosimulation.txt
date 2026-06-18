@@ -1,0 +1,91 @@
+clc;
+clear;
+
+DEPTH = 8;
+
+fifo = zeros(1,DEPTH);
+
+wr_ptr = 1;
+rd_ptr = 1;
+count = 0;
+
+input_data = [10 20 30 40 50 60 70 80];
+output_data = [];
+
+fprintf('------ FIFO WRITE OPERATION ------\n');
+
+for i = 1:length(input_data)
+
+    if count < DEPTH
+
+        fifo(wr_ptr) = input_data(i);
+
+        fprintf('Written: %d at Location %d\n', ...
+            input_data(i), wr_ptr);
+
+        wr_ptr = mod(wr_ptr,DEPTH)+1;
+
+        count = count + 1;
+
+    end
+
+end
+
+disp(' ');
+disp('FIFO Contents After Write');
+disp(fifo);
+
+if count == DEPTH
+    disp('FIFO FULL');
+end
+
+fprintf('\n------ FIFO READ OPERATION ------\n');
+
+for i = 1:length(input_data)
+
+    if count > 0
+
+        data = fifo(rd_ptr);
+
+        output_data = [output_data data];
+
+        fprintf('Read: %d from Location %d\n', ...
+            data, rd_ptr);
+
+        rd_ptr = mod(rd_ptr,DEPTH)+1;
+
+        count = count - 1;
+
+    end
+
+end
+
+if count == 0
+    disp('FIFO EMPTY');
+end
+
+fprintf('\n------ VERIFICATION ------\n');
+
+if isequal(input_data,output_data)
+
+    disp('PASS: FIFO Working Correctly');
+
+else
+
+    disp('FAIL: Data Mismatch');
+
+end
+
+disp(' ');
+disp('Input Data');
+disp(input_data);
+
+disp('Output Data');
+disp(output_data);
+
+figure;
+bar(fifo);
+title('FIFO Memory Contents');
+xlabel('Memory Location');
+ylabel('Stored Data');
+grid on;
